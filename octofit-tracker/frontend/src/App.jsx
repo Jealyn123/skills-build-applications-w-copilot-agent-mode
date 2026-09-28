@@ -1,121 +1,91 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { NavLink, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import octofitLogo from '../../../docs/octofitapp-small.png'
+import Activities from './components/Activities.jsx'
+import Leaderboard from './components/Leaderboard.jsx'
+import Overview from './components/Overview.jsx'
+import Teams from './components/Teams.jsx'
+import Users from './components/Users.jsx'
+import Workouts from './components/Workouts.jsx'
+import './theme.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const navigation = [
+  { to: '/', label: 'Overview', mark: '01', end: true },
+  { to: '/activities', label: 'Activities', mark: '02' },
+  { to: '/leaderboard', label: 'Leaderboard', mark: '03' },
+  { to: '/teams', label: 'Teams', mark: '04' },
+  { to: '/users', label: 'Students', mark: '05' },
+  { to: '/workouts', label: 'Workouts', mark: '06' },
+]
+
+function ApplicationShell() {
+  const location = useLocation()
+  const currentPage = navigation.find((item) => item.to === location.pathname)
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="application-shell">
+      <aside className="sidebar">
+        <NavLink className="brand-lockup" to="/" aria-label="OctoFit Tracker overview">
+          <img src={octofitLogo} alt="" className="brand-logo" />
+          <span className="brand-copy">
+            <strong>OctoFit</strong>
+            <small>TRACKER / MERGINGTON</small>
+          </span>
+        </NavLink>
 
-      <div className="ticks"></div>
+        <p className="nav-caption">YOUR PROGRAM</p>
+        <nav className="side-navigation" aria-label="Main navigation">
+          {navigation.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) => `side-link${isActive ? ' is-active' : ''}`}
+            >
+              <span className="side-link-mark">{item.mark}</span>
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="sidebar-note">
+          <span className="season-chip">FALL / 2026</span>
+          <p>Small moves add up.</p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </aside>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <main className="app-main">
+        <header className="topbar">
+          <div className="breadcrumbs">
+            <span>MERGINGTON HIGH</span>
+            <span className="breadcrumb-divider">/</span>
+            <strong>{currentPage?.label ?? 'OctoFit'}</strong>
+          </div>
+          <div className="topbar-meta">
+            <span className="today-label">WEEKLY VIEW</span>
+            <span className="program-badge"><span /> PE PROGRAM</span>
+          </div>
+        </header>
+        <div className="page-content">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route element={<ApplicationShell />}>
+        <Route index element={<Overview />} />
+        <Route path="activities" element={<Activities />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="teams" element={<Teams />} />
+        <Route path="users" element={<Users />} />
+        <Route path="workouts" element={<Workouts />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 

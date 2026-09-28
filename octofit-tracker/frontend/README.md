@@ -1,4 +1,6 @@
-# React + Vite
+# OctoFit Tracker
+
+See [API_SETUP.md](API_SETUP.md) for local and Codespaces API configuration.
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
